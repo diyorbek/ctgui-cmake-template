@@ -3,11 +3,19 @@ project(ctgui_project)
 
 include(FetchContent)
 
-set(SFML_VERSION "2.6.2")
+set(SFML_VERSION "3.0.0")
+# set(SFML_BUILD_AUDIO FALSE)
+# set(SFML_BUILD_NETWORK FALSE)
+# set(CSFML_BUILD_AUDIO FALSE)
+# set(CSFML_BUILD_NETWORK FALSE)
+
+# set(CTGUI_LINK_TGUI_STATICALLY TRUE)
+# set(CSFML_LINK_SFML_STATICALLY TRUE)
 set(TGUI_BACKEND SFML_GRAPHICS)
 set(TGUI_BUILD_FRAMEWORK FALSE)
+set(CTGUI_USE_CSFML_VERSION 3)
 set(CTGUI_HAS_BACKEND_CSFML_GRAPHICS 1)
-option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+set(BUILD_SHARED_LIBS FALSE)
 
 # Remove C++ stdlib flag for C compilation
 if(APPLE)
@@ -43,28 +51,32 @@ set(SFML_FOUND TRUE)
 FetchContent_Declare(
     CSFML
     GIT_REPOSITORY https://github.com/SFML/CSFML.git
-    GIT_TAG 2.6.1
+    GIT_TAG "origin/master"
 )
 FetchContent_MakeAvailable(CSFML)
 
-FetchContent_Declare(TGUI
+FetchContent_Declare(
+    TGUI
     GIT_REPOSITORY https://github.com/texus/TGUI.git
-    GIT_TAG v1.6.0)
+    GIT_TAG v1.7.0
+)
 FetchContent_MakeAvailable(TGUI)
 
-FetchContent_Declare(CTGUI
+FetchContent_Declare(
+    CTGUI
     GIT_REPOSITORY https://github.com/texus/CTGUI.git
-    GIT_TAG v1.6)
+    GIT_TAG 1.x
+)
 
 set(CSFML_INCLUDE_DIR ${CSFML_SOURCE_DIR}/include)
-set(CSFML_LIBRARY_DIR ${CSFML_BINARY_DIR}/lib)
+# set(CSFML_LIBRARY_DIR ${CSFML_BINARY_DIR}/lib)
 FetchContent_MakeAvailable(CTGUI)
 
 # Add executable with main.c in root directory
 add_executable(${PROJECT_NAME} main.c)
 
 # Link all CSFML libraries
-target_link_libraries(${PROJECT_NAME} PRIVATE ctgui)
+target_link_libraries(${PROJECT_NAME} PRIVATE SFML::Graphics csfml-graphics ctgui)
 
 # Include directories
 target_include_directories(${PROJECT_NAME} PRIVATE

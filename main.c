@@ -10,11 +10,8 @@ void func(void)
 int main()
 {
     sfVideoMode videoMode = {400, 300, 32};
-#if CSFML_VERSION_MAJOR >= 3
     sfRenderWindow* window = sfRenderWindow_create(videoMode, "CTGUI example (CSFML-GRAPHICS)", sfDefaultStyle, sfWindowed, NULL);
-#else
-    sfRenderWindow* window = sfRenderWindow_create(videoMode, "CTGUI example (CSFML-GRAPHICS)", sfDefaultStyle, NULL);
-#endif
+
     // The tguiGui object should always be the first CTGUI object to create
     tguiGui* gui = tguiGuiCSFMLGraphics_create(window);
 
