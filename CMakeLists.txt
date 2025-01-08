@@ -10,14 +10,17 @@ set(CSFML_BUILD_AUDIO FALSE)
 set(CSFML_BUILD_NETWORK FALSE)
 
 set(SFML_USE_STATIC_STD_LIBS TRUE)
+set(BUILD_SHARED_LIBS FALSE)
 
+set(FT_DISABLE_BROTLI TRUE) # Disable brotli as it's non-system dependency
+
+set(TGUI_BUILD_GUI_BUILDER FALSE) # Exclude GUI builder because it causes freetype static linking issues
 set(CTGUI_LINK_TGUI_STATICALLY TRUE)
 set(CSFML_LINK_SFML_STATICALLY TRUE)
 set(TGUI_BACKEND SFML_GRAPHICS)
 set(TGUI_BUILD_FRAMEWORK FALSE)
 set(CTGUI_USE_CSFML_VERSION 2)
 set(CTGUI_HAS_BACKEND_CSFML_GRAPHICS 1)
-set(BUILD_SHARED_LIBS FALSE)
 
 # Remove C++ stdlib flag for C compilation
 if(APPLE)
@@ -26,6 +29,17 @@ endif()
 
 # Add necessary preprocessor definitions for static linking
 add_definitions(-DSFML_STATIC -DTGUI_STATIC)
+
+# Fetch FreeType source
+FetchContent_Declare(
+  freetype
+  GIT_REPOSITORY https://gitlab.freedesktop.org/freetype/freetype.git
+  GIT_TAG        VER-2-13-2 # Change this to the desired FreeType version
+)
+FetchContent_MakeAvailable(freetype)
+
+set(FREETYPE_INCLUDE_DIRS ${freetype_SOURCE_DIR}/include)
+set(FREETYPE_LIBRARY ${freetype_BINARY_DIR}/libfreetyped.a)
 
 # Fetch SFML
 FetchContent_Declare(
@@ -78,19 +92,14 @@ FetchContent_Declare(
 )
 
 set(CSFML_INCLUDE_DIR ${CSFML_SOURCE_DIR}/include)
-# set(CSFML_LIBRARY_DIR ${CSFML_BINARY_DIR}/lib)
 FetchContent_MakeAvailable(CTGUI)
-
-# set(CMAKE_PREFIX_PATH ${SFML_SOURCE_DIR}/extlibs/)
 
 # Add executable with main.c in root directory
 add_executable(${PROJECT_NAME} main.c)
 
-target_link_directories(${PROJECT_NAME} PRIVATE ${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks)
-
 # Link all CSFML libraries
 target_link_libraries(${PROJECT_NAME} PRIVATE 
-    "-framework freetype"
+    freetype
     ctgui
 )
 
