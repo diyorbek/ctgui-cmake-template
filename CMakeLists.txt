@@ -35,6 +35,7 @@ FetchContent_Declare(
   freetype
   GIT_REPOSITORY https://gitlab.freedesktop.org/freetype/freetype.git
   GIT_TAG        VER-2-13-2 # Change this to the desired FreeType version
+  GIT_SHALLOW TRUE
 )
 FetchContent_MakeAvailable(freetype)
 
@@ -49,6 +50,7 @@ FetchContent_Declare(
     GIT_SHALLOW TRUE
 )
 FetchContent_MakeAvailable(SFML)
+# add_dependencies(sfml-graphics freetype)
 
 # Configure paths before fetching CSFML
 set(SFML_ROOT "${sfml_SOURCE_DIR}")
@@ -98,10 +100,8 @@ FetchContent_MakeAvailable(CTGUI)
 add_executable(${PROJECT_NAME} main.c)
 
 # Link all CSFML libraries
-target_link_libraries(${PROJECT_NAME} PRIVATE 
-    freetype
-    ctgui
-)
+target_link_libraries(ctgui PUBLIC freetype)
+target_link_libraries(${PROJECT_NAME} PRIVATE ctgui)
 
 # Include directories
 target_include_directories(${PROJECT_NAME} PRIVATE
